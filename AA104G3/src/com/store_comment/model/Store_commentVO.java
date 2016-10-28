@@ -2,7 +2,7 @@ package com.store_comment.model;
 
 import java.sql.Date;
 
-public class Store_CommentVO {
+public class Store_commentVO {
 	private String storecomno;
 	private String memno;
 	private String stono;

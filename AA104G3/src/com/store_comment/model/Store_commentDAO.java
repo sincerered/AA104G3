@@ -1,7 +1,6 @@
 package com.store_comment.model;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,10 +8,22 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.store_comment.model.Store_CommentVO;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
-public class Store_CommentJDBCDAO implements Store_CommentDAO_interface {
-
+public class Store_commentDAO implements Store_commentDAO_interface {
+	private static DataSource ds;
+	static {
+		try {
+			Context ctx = new InitialContext();
+			ds = (DataSource)ctx.lookup("java:comp/env/jdbc/TestDB");
+		} catch (NamingException e) {
+			e.printStackTrace();
+		}
+		
+	}
 	private static final String INSERT_STMT = "INSERT INTO store_comment (storecomno, memno, stono, comdetail, comdate, stoscore) VALUES(lpad(to_char(store_comment_SEQ.NEXTVAL),6,'0'),?,?,?,SYSDATE,?)";
 	private static final String UPDATE_STMT = "UPDATE store_comment SET memno=?, stono=?, comdetail=?, comdate=?, stoscore=? WHERE storecomno=?";
 	private static final String DELETE_STMT = "DELETE FROM store_comment WHERE storecomno=?";
@@ -22,13 +33,12 @@ public class Store_CommentJDBCDAO implements Store_CommentDAO_interface {
 	private static final String GET_BY_STONO_STMT = "SELECT storecomno, memno, stono, comdetail, comdate, stoscore FROM store_comment WHERE stono=?";
 
 	@Override
-	public void insert(Store_CommentVO store_commentVO) {
+	public void insert(Store_commentVO store_commentVO) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		
 		try{
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "scott2", "0000");
+			con = ds.getConnection();
 			pstmt = con.prepareStatement(INSERT_STMT);
 			
 			pstmt.setString(1, store_commentVO.getMemno());
@@ -39,8 +49,6 @@ public class Store_CommentJDBCDAO implements Store_CommentDAO_interface {
 			pstmt.executeUpdate();
 		}catch(SQLException se){
 			se.printStackTrace();
-		}catch(ClassNotFoundException e) {
-			e.printStackTrace();
 		}finally{
 			if(pstmt != null){
 				try{
@@ -60,13 +68,12 @@ public class Store_CommentJDBCDAO implements Store_CommentDAO_interface {
 	}
 
 	@Override
-	public void update(Store_CommentVO store_commentVO) {
+	public void update(Store_commentVO store_commentVO) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		
 		try{
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "scott2", "0000");
+			con = ds.getConnection();
 			pstmt = con.prepareStatement(UPDATE_STMT);
 			
 			pstmt.setString(1, store_commentVO.getMemno());
@@ -79,8 +86,6 @@ public class Store_CommentJDBCDAO implements Store_CommentDAO_interface {
 			pstmt.executeUpdate();
 		}catch(SQLException se){
 			se.printStackTrace();
-		}catch(ClassNotFoundException e){
-			e.printStackTrace();
 		}finally{
 			if(pstmt != null){
 				try{
@@ -105,8 +110,7 @@ public class Store_CommentJDBCDAO implements Store_CommentDAO_interface {
 		PreparedStatement pstmt = null;
 		
 		try{
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "scott2", "0000");
+			con = ds.getConnection();
 			pstmt = con.prepareStatement(DELETE_STMT);
 			
 			pstmt.setString(1, storecomno);
@@ -114,8 +118,6 @@ public class Store_CommentJDBCDAO implements Store_CommentDAO_interface {
 			pstmt.executeUpdate();
 		}catch(SQLException se){
 			se.printStackTrace();
-		}catch(ClassNotFoundException e){
-			e.printStackTrace();
 		}finally{
 			if(pstmt != null){
 				try{
@@ -135,22 +137,21 @@ public class Store_CommentJDBCDAO implements Store_CommentDAO_interface {
 	}
 
 	@Override
-	public Store_CommentVO findByPrimaryKey(String storecomno) {
+	public Store_commentVO findByPrimaryKey(String storecomno) {
+		Store_commentVO store_commentVO = null;
 		Connection con = null;
 		PreparedStatement pstmt = null;
-		Store_CommentVO store_commentVO = null;
 		ResultSet rs = null;
 		
 		try{
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "scott2", "0000");
+			con = ds.getConnection();
 			pstmt = con.prepareStatement(GET_ONE_STMT);
 			
 			pstmt.setString(1, storecomno);
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){
-				store_commentVO = new Store_CommentVO();
+				store_commentVO = new Store_commentVO();
 				
 				store_commentVO.setStorecomno(rs.getString("storecomno"));
 				store_commentVO.setMemno(rs.getString("memno"));
@@ -163,8 +164,6 @@ public class Store_CommentJDBCDAO implements Store_CommentDAO_interface {
 			
 		}catch(SQLException se){
 			se.printStackTrace();
-		}catch(ClassNotFoundException e){
-			
 		}finally{
 			if(pstmt != null){
 				try{
@@ -185,22 +184,21 @@ public class Store_CommentJDBCDAO implements Store_CommentDAO_interface {
 	}
 
 	@Override
-	public List<Store_CommentVO> getAll() {
-		Store_CommentVO store_commentVO = null;
-		List<Store_CommentVO> list = new ArrayList<Store_CommentVO>();
+	public List<Store_commentVO> getAll() {
+		Store_commentVO store_commentVO = null;
+		List<Store_commentVO> list = new ArrayList<Store_commentVO>();
 		
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try{
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "scott2", "0000");
+			con = ds.getConnection();
 			pstmt = con.prepareStatement(GET_ALL_STMT);
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){
-				store_commentVO = new Store_CommentVO();
+				store_commentVO = new Store_commentVO();
 				
 				store_commentVO.setStorecomno(rs.getString("storecomno"));
 				store_commentVO.setMemno(rs.getString("memno"));
@@ -215,8 +213,6 @@ public class Store_CommentJDBCDAO implements Store_CommentDAO_interface {
 			
 		}catch(SQLException se){
 			se.printStackTrace();
-		}catch(ClassNotFoundException e){
-			e.printStackTrace();
 		}finally{
 			if(pstmt != null){
 				try{
@@ -237,24 +233,23 @@ public class Store_CommentJDBCDAO implements Store_CommentDAO_interface {
 	}
 
 	@Override
-	public List<Store_CommentVO> findByMemno(String memno) {
-		Store_CommentVO store_commentVO = null;
-		List<Store_CommentVO> list = new ArrayList<Store_CommentVO>();
+	public List<Store_commentVO> findByMemno(String memno) {
+		Store_commentVO store_commentVO = null;
+		List<Store_commentVO> list = new ArrayList<Store_commentVO>();
 		
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try{
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "scott2", "0000");
+			con = ds.getConnection();
 			pstmt = con.prepareStatement(GET_BY_MEMNO_STMT);
 			
 			pstmt.setString(1, memno);
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){
-				store_commentVO = new Store_CommentVO();
+				store_commentVO = new Store_commentVO();
 				
 				store_commentVO.setStorecomno(rs.getString("storecomno"));
 				store_commentVO.setMemno(rs.getString("memno"));
@@ -269,8 +264,6 @@ public class Store_CommentJDBCDAO implements Store_CommentDAO_interface {
 			
 		}catch(SQLException se){
 			se.printStackTrace();
-		}catch(ClassNotFoundException e){
-			e.printStackTrace();
 		}finally{
 			if(pstmt != null){
 				try{
@@ -291,24 +284,23 @@ public class Store_CommentJDBCDAO implements Store_CommentDAO_interface {
 	}
 
 	@Override
-	public List<Store_CommentVO> findByStono(String stono) {
-		Store_CommentVO store_commentVO = null;
-		List<Store_CommentVO> list = new ArrayList<Store_CommentVO>();
+	public List<Store_commentVO> findByStono(String stono) {
+		Store_commentVO store_commentVO = null;
+		List<Store_commentVO> list = new ArrayList<Store_commentVO>();
 		
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try{
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "scott2", "0000");
+			con = ds.getConnection();
 			pstmt = con.prepareStatement(GET_BY_MEMNO_STMT);
 			
 			pstmt.setString(1, stono);
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){
-				store_commentVO = new Store_CommentVO();
+				store_commentVO = new Store_commentVO();
 				
 				store_commentVO.setStorecomno(rs.getString("storecomno"));
 				store_commentVO.setMemno(rs.getString("memno"));
@@ -323,8 +315,6 @@ public class Store_CommentJDBCDAO implements Store_CommentDAO_interface {
 			
 		}catch(SQLException se){
 			se.printStackTrace();
-		}catch(ClassNotFoundException e){
-			e.printStackTrace();
 		}finally{
 			if(pstmt != null){
 				try{
@@ -343,58 +333,4 @@ public class Store_CommentJDBCDAO implements Store_CommentDAO_interface {
 		}
 		return list;
 	}
-	
-	public static void main(String[] argd) {
-		Store_CommentJDBCDAO  store_commentDAO = new Store_CommentJDBCDAO();
-		List<Store_CommentVO> list1 = store_commentDAO.getAll();
-		List<Store_CommentVO> list2 = store_commentDAO.findByMemno("000002");
-		List<Store_CommentVO> list3 = store_commentDAO.findByStono("000002");
-		
-		for (Store_CommentVO store_commentVO : list1) {
-			System.out.print(store_commentVO.getStorecomno());
-			System.out.print(store_commentVO.getMemno());
-			System.out.print(store_commentVO.getStono());
-			System.out.print(store_commentVO.getComdetail());
-			System.out.print(store_commentVO.getComdate());
-			System.out.println(store_commentVO.getStoscore());
-		}	
-		for (Store_CommentVO store_commentVO : list2) {
-			System.out.print(store_commentVO.getStorecomno());
-			System.out.print(store_commentVO.getMemno());
-			System.out.print(store_commentVO.getStono());
-			System.out.print(store_commentVO.getComdetail());
-			System.out.print(store_commentVO.getComdate());
-			System.out.println(store_commentVO.getStoscore());
-		}	
-		for (Store_CommentVO store_commentVO : list3) {
-			System.out.print(store_commentVO.getStorecomno());
-			System.out.print(store_commentVO.getMemno());
-			System.out.print(store_commentVO.getStono());
-			System.out.print(store_commentVO.getComdetail());
-			System.out.print(store_commentVO.getComdate());
-			System.out.println(store_commentVO.getStoscore());
-		}	
-		
-		Store_CommentVO store_commentVO = store_commentDAO.findByPrimaryKey("000001");
-		System.out.print(store_commentVO.getStorecomno());
-		System.out.print(store_commentVO.getMemno());
-		System.out.print(store_commentVO.getStono());
-		System.out.print(store_commentVO.getComdetail());
-		System.out.print(store_commentVO.getComdate());
-		System.out.println(store_commentVO.getStoscore());
-
-		Store_CommentVO store_commentVO2 = new Store_CommentVO();
-		store_commentVO2.setStorecomno("000001");
-		store_commentVO2.setMemno("000002");
-		store_commentVO2.setStono("000003");
-		store_commentVO2.setComdetail("fsafwegsdgasdfewf");
-		store_commentVO2.setComdate(new Date(new java.util.Date().getTime()));
-		store_commentVO2.setStoscore(1);
-		
-		store_commentDAO.insert(store_commentVO2);
-		store_commentDAO.update(store_commentVO2);
-		store_commentDAO.delete("000004");
-		
-	}
-
 }
