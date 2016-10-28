@@ -56,6 +56,12 @@ public class StoreServlet extends HttpServlet {
 				if (stoid.indexOf(" ") != -1) {
 					errorMsgs.add("帳號不能包含空白字元");
 				}
+				if (stopw1 == null || stopw1.trim().length() == 0) {
+					errorMsgs.add("請輸入密碼");
+				}
+				if (stopw2 == null || stopw2.trim().length() == 0) {
+					errorMsgs.add("請輸入密碼確認");
+				}
 				
 				
 				
