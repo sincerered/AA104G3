@@ -18,7 +18,7 @@ public class StoreDAO implements StoreDAO_interface{
 	static {
 		try {
 			Context ctx = new InitialContext();
-			ds = (DataSource)ctx.lookup("java:comp/env/jdbc/TextDB");
+			ds = (DataSource)ctx.lookup("java:comp/env/jdbc/TestDB");
 		} catch(NamingException e) {
 			e.printStackTrace();
 		}

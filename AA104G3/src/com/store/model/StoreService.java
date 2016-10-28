@@ -67,4 +67,8 @@ public class StoreService {
 	public List<StoreVO> getAll() {
 		return dao.getAll();
 	}
+	
+	public StoreVO getOneByStoid(String stoid) {
+		return dao.findByStoid(stoid);
+	}
 }

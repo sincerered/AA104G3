@@ -47,4 +47,8 @@ public class ReservationService {
 	public List<ReservationVO> getAll() {
 		return dao.getAll();
 	}
+	
+	public List<ReservationVO> getReservationByTableno(String tableno) {
+		return dao.findByTableno(tableno);
+	}
 }

@@ -47,4 +47,8 @@ public class StotableService {
 	public List<StotableVO> getAll() {
 		return dao.getAll();
 	}
+	
+	public List<StotableVO> getStotableByStono(String stono) {
+		return dao.findByStono(stono);
+	}
 }

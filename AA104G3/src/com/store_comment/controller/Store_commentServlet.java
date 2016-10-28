@@ -17,7 +17,7 @@ public class Store_commentServlet extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Store_commentServlet() {
+    public Store_commentServlet() {//
         super();
         // TODO Auto-generated constructor stub
     }

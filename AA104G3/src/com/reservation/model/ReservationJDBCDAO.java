@@ -20,7 +20,7 @@ public class ReservationJDBCDAO implements ReservationDAO_interface {
 	private static final String GET_ALL_STMT = "SELECT resvno, memno, tableno, resvdate, resvperiod, teamno, resvstate FROM reservation";
 	private static final String GET_ONE_STMT = "SELECT resvno, memno, tableno, resvdate, resvperiod, teamno, resvstate FROM reservation WHERE resvno=?";
 	private static final String GET_BY_MEMNO_STMT = "SELECT resvno, memno, tableno, resvdate, resvperiod, teamno, resvstate FROM reservation WHERE memno=?";
-	private static final String GET_BY_TABLENO_STMT = "SELECT resvno, memno, tableno, resvdate, resvperiod, teamno, resvstate FROM reservation WHERE tableno=?";
+	private static final String GET_BY_TABLENO_STMT = "SELECT resvno, memno, tableno, resvdate, resvperiod, teamno, resvstate FROM reservation WHERE tableno=? ORDER BY resvdate";
 	private static final String GET_BY_TEAMNO_STMT = "SELECT resvno, memno, tableno, resvdate, resvperiod, teamno, resvstate FROM reservation WHERE teamno=?";
 	
 	
