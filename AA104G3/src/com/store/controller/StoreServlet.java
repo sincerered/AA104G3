@@ -44,7 +44,8 @@ public class StoreServlet extends HttpServlet {
 			
 			try {
 				String stoid = req.getParameter("stoid");
-				
+				String stopw1 = req.getParameter("stopw1");
+				String stopw2 = req.getParameter("stopw2");
 				if (stoid == null || stoid.trim().length() == 0) {
 					errorMsgs.add("請輸入帳號");
 				}
@@ -55,6 +56,7 @@ public class StoreServlet extends HttpServlet {
 				if (stoid.indexOf(" ") != -1) {
 					errorMsgs.add("帳號不能包含空白字元");
 				}
+				
 				
 				
 			} catch (Exception e) {
