@@ -35,7 +35,7 @@ public class ReservationServer {
 			Map<String, Integer[][]> storeMap = Collections.synchronizedMap(new HashMap<String, Integer[][]>());
 			String stobh = new StoreService().getOneStore(stono).getStobh();
 			int minTime = 0;
-			int maxTime = 23;
+			int maxTime = 24;
 			
 			for (int i = 0; i < 7; i++) {
 				String subStobh = stobh.substring(i * 24, (i + 1) * 24);
@@ -44,7 +44,7 @@ public class ReservationServer {
 					minTime = firstIndex;
 				}
 				int lastIndex = subStobh.lastIndexOf("1");
-				if (lastIndex < maxTime) {
+				if (lastIndex + 1 < maxTime) {
 					maxTime = lastIndex;
 				}
 			}
@@ -138,8 +138,8 @@ public class ReservationServer {
 		Integer[][] timeSeatRange = map.get("timeSeatRange");
 		json.put("minTime", timeSeatRange[0][0]);
 		json.put("maxTime", timeSeatRange[0][1]);
-		json.put("minSeat", timeSeatRange[0][0]);
-		json.put("maxSeat", timeSeatRange[0][1]);
+		json.put("minSeat", timeSeatRange[1][0]);
+		json.put("maxSeat", timeSeatRange[1][1]);
 		JSONObject seat = new JSONObject();
 		Set<String> keySet = map.keySet();
 		for (String date : keySet) {

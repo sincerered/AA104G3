@@ -8,11 +8,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+
+import jdbc.util.CompositQuery.jdbcUtil_CompositeQuery_Reservation;
 
 
 public class ReservationDAO implements ReservationDAO_interface {
@@ -354,6 +357,61 @@ public class ReservationDAO implements ReservationDAO_interface {
 			pstmt = con.prepareStatement(GET_BY_TEAMNO_STMT);
 			
 			pstmt.setString(1, teamno);
+			
+			rs = pstmt.executeQuery();
+			while(rs.next()){
+				reservationVO = new ReservationVO();
+				
+				reservationVO.setResvno(rs.getString("resvno"));
+				reservationVO.setMemno(rs.getString("memno"));
+				reservationVO.setTableno(rs.getString("tableno"));
+				reservationVO.setResvdate(rs.getDate("resvdate"));
+				reservationVO.setResvperiod(rs.getString("resvperiod"));
+				reservationVO.setTeamno(rs.getString("teamno"));
+				reservationVO.setResvstate(rs.getString("resvstate"));
+				
+				list.add(reservationVO);
+			}
+			
+			
+		}catch(SQLException se){
+			se.printStackTrace();
+		}finally{
+			if(pstmt != null){
+				try{
+					pstmt.close();
+				}catch(SQLException se){
+					se.printStackTrace();
+				}
+			}
+			if(con != null){
+				try{
+					con.close();
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
+	}
+	
+	@Override
+	public List<ReservationVO> getAll(Map<String, String[]> map) {
+		List<ReservationVO> list = new ArrayList<ReservationVO>();
+		ReservationVO reservationVO = null;
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try{
+			con = ds.getConnection();
+			
+			String finalSQL = "SELECT * FROM reservation "
+					+ jdbcUtil_CompositeQuery_Reservation.get_WhereCondition(map);
+			
+			System.out.println("finalSQL by reservation is " + finalSQL);
+			pstmt = con.prepareStatement(finalSQL);
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()){

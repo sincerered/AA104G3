@@ -1,6 +1,9 @@
 package com.stotable.model;
 
 import java.util.List;
+import java.util.Set;
+
+import com.reservation.model.ReservationVO;
 
 public interface StotableDAO_interface {
 	public void insert(StotableVO stotableVO);

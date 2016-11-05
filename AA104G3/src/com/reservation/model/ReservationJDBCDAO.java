@@ -7,9 +7,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.stotable.model.StotableJDBCDAO;
+
+import jdbc.util.CompositQuery.jdbcUtil_CompositeQuery_Reservation;
 
 
 public class ReservationJDBCDAO implements ReservationDAO_interface {
@@ -403,82 +407,164 @@ public class ReservationJDBCDAO implements ReservationDAO_interface {
 		}
 		return list;
 	}
+	
+	@Override
+	public List<ReservationVO> getAll(Map<String, String[]> map) {
+		List<ReservationVO> list = new ArrayList<ReservationVO>();
+		ReservationVO reservationVO = null;
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "scott2", "0000");
+			
+			String finalSQL = "SELECT * FROM reservation "
+					+ jdbcUtil_CompositeQuery_Reservation.get_WhereCondition(map)
+					+ " ORDER BY resvdate DESC";
+			
+			System.out.println("finalSQL by reservation is " + finalSQL);
+			pstmt = con.prepareStatement(finalSQL);
+			
+			rs = pstmt.executeQuery();
+			while(rs.next()){
+				reservationVO = new ReservationVO();
+				
+				reservationVO.setResvno(rs.getString("resvno"));
+				reservationVO.setMemno(rs.getString("memno"));
+				reservationVO.setTableno(rs.getString("tableno"));
+				reservationVO.setResvdate(rs.getDate("resvdate"));
+				reservationVO.setResvperiod(rs.getString("resvperiod"));
+				reservationVO.setTeamno(rs.getString("teamno"));
+				reservationVO.setResvstate(rs.getString("resvstate"));
+				
+				list.add(reservationVO);
+			}
+			
+			
+		}catch(SQLException se){
+			se.printStackTrace();
+		}catch(ClassNotFoundException e){
+			e.printStackTrace();
+		}finally{
+			if(pstmt != null){
+				try{
+					pstmt.close();
+				}catch(SQLException se){
+					se.printStackTrace();
+				}
+			}
+			if(con != null){
+				try{
+					con.close();
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
+	}
+	
 	public static void main(String[] args){
 		ReservationJDBCDAO reservationDAO = new ReservationJDBCDAO();
 		List<ReservationVO> list = reservationDAO.getAll();
+//		
+//		for (ReservationVO reservationVO : list) {
+//			
+//			System.out.print(reservationVO.getResvno());
+//			System.out.print(reservationVO.getMemno());
+//			System.out.print(reservationVO.getTableno());
+//			System.out.print(reservationVO.getResvdate());
+//			System.out.print(reservationVO.getResvperiod());
+//			System.out.print(reservationVO.getTeamno());
+//			System.out.println(reservationVO.getResvstate());
+//		}
+//
+//		list = reservationDAO.findByMemno("000002");
+//		for (ReservationVO reservationVO : list) {
+//			
+//			System.out.print(reservationVO.getResvno());
+//			System.out.print(reservationVO.getMemno());
+//			System.out.print(reservationVO.getTableno());
+//			System.out.print(reservationVO.getResvdate());
+//			System.out.print(reservationVO.getResvperiod());
+//			System.out.print(reservationVO.getTeamno());
+//			System.out.println(reservationVO.getResvstate());
+//		}
+//		
+//		list = reservationDAO.findByTableno("000004");
+//		for (ReservationVO reservationVO : list) {
+//			
+//			System.out.print(reservationVO.getResvno());
+//			System.out.print(reservationVO.getMemno());
+//			System.out.print(reservationVO.getTableno());
+//			System.out.print(reservationVO.getResvdate());
+//			System.out.print(reservationVO.getResvperiod());
+//			System.out.print(reservationVO.getTeamno());
+//			System.out.println(reservationVO.getResvstate());
+//		}
+//		
+//		list = reservationDAO.findByTeamno("000001");
+//		for (ReservationVO reservationVO : list) {
+//			
+//			System.out.print(reservationVO.getResvno());
+//			System.out.print(reservationVO.getMemno());
+//			System.out.print(reservationVO.getTableno());
+//			System.out.print(reservationVO.getResvdate());
+//			System.out.print(reservationVO.getResvperiod());
+//			System.out.print(reservationVO.getTeamno());
+//			System.out.println(reservationVO.getResvstate());
+//		}
+//		
+//		
+//
+//		ReservationVO reservationVO = reservationDAO.findByPrimaryKey("000011");
+//		System.out.print(reservationVO.getResvno());
+//		System.out.print(reservationVO.getMemno());
+//		System.out.print(reservationVO.getTableno());
+//		System.out.print(reservationVO.getResvdate());
+//		System.out.print(reservationVO.getResvperiod());
+//		System.out.print(reservationVO.getTeamno());
+//		System.out.println(reservationVO.getResvstate());
+//		
+//		
+//		reservationVO = new ReservationVO();
+//		reservationVO.setResvno("000010");
+//		reservationVO.setMemno("000001");
+//		reservationVO.setTableno("000001");
+//		reservationVO.setResvdate(new Date(new java.util.Date().getTime()));
+//		reservationVO.setResvperiod("00000000001111111111");
+//		reservationVO.setTeamno("000001");
+//		reservationVO.setResvstate("1");
+//		
+//		reservationDAO.insert(reservationVO);
+//		
+//		reservationDAO.update(reservationVO);
+//		
+//		reservationDAO.delete("000002");
 		
-		for (ReservationVO reservationVO : list) {
+		System.out.println("Composite query=======================");
+		
+		Map<String, String[]> map = new HashMap<String, String[]>();
+		map.put("resvdateMax", new String[] {"2016-11-02"});
+		map.put("resvdateMin", new String[] {"2016-11-01"});
+		map.put("resvperiodMax", new String[] {"13"});
+		map.put("resvperiodMin", new String[] {"7"});
+		map.put("stono", new String[] {"000001"});
+		list = reservationDAO.getAll(map);
+		for (ReservationVO reservationVO2 : list) {
 			
-			System.out.print(reservationVO.getResvno());
-			System.out.print(reservationVO.getMemno());
-			System.out.print(reservationVO.getTableno());
-			System.out.print(reservationVO.getResvdate());
-			System.out.print(reservationVO.getResvperiod());
-			System.out.print(reservationVO.getTeamno());
-			System.out.println(reservationVO.getResvstate());
-		}
-
-		list = reservationDAO.findByMemno("000002");
-		for (ReservationVO reservationVO : list) {
-			
-			System.out.print(reservationVO.getResvno());
-			System.out.print(reservationVO.getMemno());
-			System.out.print(reservationVO.getTableno());
-			System.out.print(reservationVO.getResvdate());
-			System.out.print(reservationVO.getResvperiod());
-			System.out.print(reservationVO.getTeamno());
-			System.out.println(reservationVO.getResvstate());
-		}
+			System.out.print(reservationVO2.getResvno());
+			System.out.print(reservationVO2.getMemno());
+			System.out.print(reservationVO2.getTableno());
+			System.out.print(reservationVO2.getResvdate());
+			System.out.print(reservationVO2.getResvperiod());
+			System.out.print(reservationVO2.getTeamno());
+			System.out.println(reservationVO2.getResvstate());
+		}		
 		
-		list = reservationDAO.findByTableno("000004");
-		for (ReservationVO reservationVO : list) {
-			
-			System.out.print(reservationVO.getResvno());
-			System.out.print(reservationVO.getMemno());
-			System.out.print(reservationVO.getTableno());
-			System.out.print(reservationVO.getResvdate());
-			System.out.print(reservationVO.getResvperiod());
-			System.out.print(reservationVO.getTeamno());
-			System.out.println(reservationVO.getResvstate());
-		}
-		
-		list = reservationDAO.findByTeamno("000001");
-		for (ReservationVO reservationVO : list) {
-			
-			System.out.print(reservationVO.getResvno());
-			System.out.print(reservationVO.getMemno());
-			System.out.print(reservationVO.getTableno());
-			System.out.print(reservationVO.getResvdate());
-			System.out.print(reservationVO.getResvperiod());
-			System.out.print(reservationVO.getTeamno());
-			System.out.println(reservationVO.getResvstate());
-		}
-		
-		
-
-		ReservationVO reservationVO = reservationDAO.findByPrimaryKey("000011");
-		System.out.print(reservationVO.getResvno());
-		System.out.print(reservationVO.getMemno());
-		System.out.print(reservationVO.getTableno());
-		System.out.print(reservationVO.getResvdate());
-		System.out.print(reservationVO.getResvperiod());
-		System.out.print(reservationVO.getTeamno());
-		System.out.println(reservationVO.getResvstate());
-		
-		
-		reservationVO = new ReservationVO();
-		reservationVO.setResvno("000010");
-		reservationVO.setMemno("000001");
-		reservationVO.setTableno("000001");
-		reservationVO.setResvdate(new Date(new java.util.Date().getTime()));
-		reservationVO.setResvperiod("00000000001111111111");
-		reservationVO.setTeamno("000001");
-		reservationVO.setResvstate("1");
-		
-		reservationDAO.insert(reservationVO);
-		
-		reservationDAO.update(reservationVO);
-		
-		reservationDAO.delete("000002");
 	}
+
 }

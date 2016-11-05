@@ -2,6 +2,7 @@ package com.reservation.model;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 
 public class ReservationService {
 	private ReservationDAO_interface dao;
@@ -35,6 +36,11 @@ public class ReservationService {
 		dao.update(reservationVO);
 		return reservationVO;		
 	}
+
+	public ReservationVO updateReservation(ReservationVO reservationVO) {
+		dao.update(reservationVO);
+		return reservationVO;		
+	}
 	
 	public void deleteReservation(String resvno) {
 		dao.delete(resvno);
@@ -46,6 +52,10 @@ public class ReservationService {
 	
 	public List<ReservationVO> getAll() {
 		return dao.getAll();
+	}
+
+	public List<ReservationVO> getAll(Map<String, String[]> map) {
+		return dao.getAll(map);
 	}
 	
 	public List<ReservationVO> getReservationByTableno(String tableno) {

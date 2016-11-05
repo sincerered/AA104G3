@@ -1,0 +1,14 @@
+ <%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="BIG5"%>
+ <div class="list-group">
+	 <a href="<%= request.getContextPath() %>/store/store.do?action=get_store_main" class="list-group-item border-rect">
+	    主頁面
+	 </a>
+	 	<a href="<%= request.getContextPath() %>/store/store.do?action=get_store_detail" class="list-group-item border-rect">
+	    店家資料管理
+	 </a>
+	 <a href="<%= request.getContextPath() %>/store/store.do?action=get_store_resv" class="list-group-item">訂位管理</a>
+	 <a href="#" class="list-group-item">訂單管理</a>
+	 <a href="#" class="list-group-item">評論</a>
+	 <a href="#" class="list-group-item border-rect"></a>
+</div>

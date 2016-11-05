@@ -35,6 +35,11 @@ public class StotableService {
 		dao.update(stotableVO);
 		return stotableVO;		
 	}
+
+	public StotableVO updateStotable(StotableVO stotableVO) {
+		dao.update(stotableVO);
+		return stotableVO;		
+	}
 	
 	public void deleteStotable(String tableno) {
 		dao.delete(tableno);

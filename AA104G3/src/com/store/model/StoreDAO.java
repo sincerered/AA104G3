@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -341,5 +343,11 @@ public class StoreDAO implements StoreDAO_interface{
 			}
 		}
 		return storeVO;
+	}
+
+	@Override
+	public Set<StoreVO> getAll(Map<String, String[]> map) {
+		
+		return null;
 	}
 }

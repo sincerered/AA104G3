@@ -9,6 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class StoreJDBCDAO implements StoreDAO_interface{
 	private static Connection con;
@@ -356,6 +358,12 @@ public class StoreJDBCDAO implements StoreDAO_interface{
 		return storeVO;
 	}
 	
+	@Override
+	public Set<StoreVO> getAll(Map<String, String[]> map) {
+		
+		return null;
+	}
+	
 	public static void main(String[] args){
 		StoreJDBCDAO storeDAO = new StoreJDBCDAO();
 		List<StoreVO> list = storeDAO.getAll();
@@ -381,7 +389,7 @@ public class StoreJDBCDAO implements StoreDAO_interface{
 			System.out.println(storeVO.getAccountno());
 		}
 		
-		StoreVO storeVO1 = storeDAO.findByStoid("aa03");
+		StoreVO storeVO1 = storeDAO.findByPrimaryKey("000001");
 		System.out.print(storeVO1.getStono());
 		System.out.print(storeVO1.getStoid());
 		System.out.print(storeVO1.getStopw());
@@ -433,7 +441,8 @@ public class StoreJDBCDAO implements StoreDAO_interface{
 		
 		storeDAO.insert(storeVO2);
 		storeDAO.update(storeVO2);
-		storeDAO.delete("000001");
+//		storeDAO.delete("000001");
 	}
+
 	
 }

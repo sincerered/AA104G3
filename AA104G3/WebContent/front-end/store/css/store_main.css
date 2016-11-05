@@ -1,0 +1,24 @@
+.border-rect {
+  border-radius: 0px!important;
+}
+div.chenken-store-detail-list>div>div:first-child{
+	text-align:right;
+}
+div.chenken-store-detail-list>div>div:last-child {
+	text-align:left;
+}
+div.chenken-store-detail-list>div {
+	margin-bottom: 10px;
+}
+form.chenken-input-text input {
+  width: 100%;
+  padding: 4px;
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #777;
+  margin-bottom: 15px;
+}
+
+form.chenken-input-text input:focus {
+  color: #111;
+}

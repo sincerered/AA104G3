@@ -55,6 +55,11 @@ public class StoreService {
 		dao.update(storeVO);
 		return storeVO;		
 	}
+
+	public StoreVO updateStore(StoreVO storeVO) {
+		dao.update(storeVO);
+		return storeVO;		
+	}
 	
 	public void deleteStore(String stono) {
 		dao.delete(stono);

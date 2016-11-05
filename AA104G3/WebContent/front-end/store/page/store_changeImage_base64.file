@@ -1,0 +1,27 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="BIG5" import="java.util.Base64"%>
+<jsp:useBean id="storeVO" scope="request" class="com.store.model.StoreVO" />
+<% 
+	String base64String = null;
+	
+	byte[] bytes = storeVO.getStopic();
+	if (bytes != null) {
+		base64String = Base64.getEncoder().encodeToString(bytes);
+		System.out.println("bytes size = " + bytes.length);
+	}
+%>
+<% System.out.println(base64String);%>
+<c:if test="${base64String == null}">
+	<% System.out.println("kerker");%>
+	<img src="data:image/jpg;base64,${base64String}" class="img-responsive" alt="no image">
+</c:if>
+<c:if test="${not empty errorMsgs }">
+	<c:forEach var="errorMsg" items="${errorMsgs }">
+		<div style="color:red">${errorMsg}</div>
+	</c:forEach>
+</c:if>
+<form action="<%= request.getContextPath() %>/store/store.do" method="post" enctype="multipart/form-data">
+  <input type="file" name="stopic">
+  <input type="hidden" name="action" value="upload_image">
+  <input type="submit">      
+</form> 

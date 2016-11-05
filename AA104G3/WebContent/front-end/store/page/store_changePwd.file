@@ -1,0 +1,20 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="BIG5" import="java.util.Base64"%>
+
+<div class="col-sm-4 col-sm-push-4">
+  <div class="row">
+  	<c:if test="${not empty errorMsgs }">
+  		<c:forEach var="errorMsg" items="${errorMsgs }">
+  			<div style="color:red">${errorMsg}</div>
+  		</c:forEach>
+  	</c:if>
+    <form class="chenken-input-text" method="post" action="<%= request.getContextPath() %>/store/store.do">
+      <input type="password" name="stoid" placeholder="ÂÂ±K½X">
+      <input type="password" name="stopw_new" placeholder="·s±K½X">
+      <input type="password" name="stopw_confirm" placeholder="±K½X½T»{">
+      <input type="submit" name="" value="µn¤J">
+      <input type="hidden" name="action" value="change_pwd">
+    </form>
+    
+  </div>
+</div>

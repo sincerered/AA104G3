@@ -1,6 +1,8 @@
 package com.store.model;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface StoreDAO_interface {
 	public void insert(StoreVO storeVO);
@@ -9,4 +11,5 @@ public interface StoreDAO_interface {
 	public StoreVO findByPrimaryKey(String stono);
 	public List<StoreVO> getAll();
 	public StoreVO findByStoid(String stoname);
+	public Set<StoreVO> getAll(Map<String, String[]> map);
 }

@@ -8,6 +8,17 @@
 </head>
 <body>
 	${errorMsgs }
+	<br>
+	stono =  ${stono }
+	<br>
 	this is chenken's index
+	<br>
+	<a href="<%= request.getContextPath() %>/store/store.do?action=logout">logout</a>
+	<a href="<%= request.getContextPath() %>/front-end/store/login.jsp">login</a>
+	<a href="<%= request.getContextPath() %>/store/store.do?action=get_store_register">register</a>
+	<a href="<%= request.getContextPath() %>/store/store.do?action=get_store_main">store</a>
+	<a href="<%= request.getContextPath() %>/reservation/reservation.do?action=listReservations_ByCompositionQuery">listResv_byComposition</a>
+	
+	
 </body>
 </html>

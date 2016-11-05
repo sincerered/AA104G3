@@ -33,6 +33,11 @@ public class Store_commentService {
 		dao.update(store_commentVO);
 		return store_commentVO;
 	}
+
+	public Store_commentVO updateStore_Comment(Store_commentVO store_commentVO) {
+		dao.update(store_commentVO);
+		return store_commentVO;
+	}
 	
 	public void deleteStore_Comment(String storecomno) {
 		dao.delete(storecomno);

@@ -1,0 +1,16 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="BIG5" import="java.util.Base64"%>
+
+
+<img src="<%= request.getContextPath()%>/store/store.do?action=get_stopic&stono=${sessionScope.stono}" class="img-responsive" alt="no image">
+
+<c:if test="${not empty errorMsgs }">
+	<c:forEach var="errorMsg" items="${errorMsgs }">
+		<div style="color:red">${errorMsg}</div>
+	</c:forEach>
+</c:if>
+<form action="<%= request.getContextPath() %>/store/store.do" method="post" enctype="multipart/form-data">
+  <input type="file" name="stopic">
+  <input type="hidden" name="action" value="upload_image">
+  <input type="submit">      
+</form> 
