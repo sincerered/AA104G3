@@ -2,10 +2,14 @@ package com.reservation.model;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.ServletException;
 
 public interface ReservationDAO_interface {
 	public void insert(ReservationVO reservationVO);
 	public void update(ReservationVO reservationVO);
+	public void updates(Set<ReservationVO> set) throws ServletException;
 	public void delete(String resvno);
 	public ReservationVO findByPrimaryKey(String resvno);
 	public List<ReservationVO> getAll();

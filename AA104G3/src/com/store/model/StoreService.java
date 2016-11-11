@@ -6,7 +6,7 @@ public class StoreService {
 	private StoreDAO_interface dao;
 	
 	public StoreService() {
-		dao = new StoreDAO();
+		dao = new StoreJNDIDAO();
 	}
 	
 	public StoreVO addStore(String stoid, String stopw, String stostate, String stoname, String stoemail, String stoaddr, String stophone, String stoowner, Double stolong, Double stolati, byte[] stopic, byte[] stoproof, String stobh, String bankno, String bankname, String accountname, String accountno) {

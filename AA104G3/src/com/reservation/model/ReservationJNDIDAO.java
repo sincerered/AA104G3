@@ -9,16 +9,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.ServletException;
 import javax.sql.DataSource;
 
 import jdbc.util.CompositQuery.jdbcUtil_CompositeQuery_Reservation;
 
 
-public class ReservationDAO implements ReservationDAO_interface {
+public class ReservationJNDIDAO implements ReservationDAO_interface{
 	private static DataSource ds;
 	static {
 		try {
@@ -113,6 +115,54 @@ public class ReservationDAO implements ReservationDAO_interface {
 		}
 	}
 
+	@Override
+	public void updates(Set<ReservationVO> set) throws ServletException {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try{
+			con = ds.getConnection();
+			con.setAutoCommit(false);
+			pstmt = con.prepareStatement(UPDATE_STMT);
+			
+			for (ReservationVO reservationVO : set) {
+				
+				pstmt.setString(1, reservationVO.getMemno());
+				pstmt.setString(2, reservationVO.getTableno());
+				pstmt.setDate(3, reservationVO.getResvdate());
+				pstmt.setString(4, reservationVO.getResvperiod());
+				pstmt.setString(5, reservationVO.getTeamno());
+				pstmt.setString(6, reservationVO.getResvstate());
+				pstmt.setString(7, reservationVO.getResvno());
+				
+				pstmt.executeUpdate();
+			}
+			con.commit();
+		}catch(SQLException se){
+			try {
+				con.rollback();
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
+			}
+			throw new ServletException(se);
+		}finally{
+			if(pstmt != null){
+				try{
+					pstmt.close();
+				}catch(SQLException se){
+					se.printStackTrace();
+				}
+			}
+			if(con != null){
+				try{
+					con.close();
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	@Override
 	public void delete(String resvno) {
 		Connection con = null;

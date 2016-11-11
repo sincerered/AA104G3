@@ -14,7 +14,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 
-public class StotableDAO implements StotableDAO_interface{
+public class StotableJNDIDAO implements StotableDAO_interface{
 	private static DataSource ds;
 	static {
 		try {

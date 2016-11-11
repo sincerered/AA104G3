@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
+<%@ page language="java" contentType="text/html; charset=BIG5"
     pageEncoding="BIG5" import="com.store.model.StoreVO" import="java.util.GregorianCalendar"
     import="java.util.Calendar"
     import="java.text.SimpleDateFormat"
@@ -21,7 +21,6 @@ ${listReservations_ByCompositionQuery == null }
     <title>店家會員中心</title>
 
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/bootstrap.min.css">
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/jquery-ui.min.css">
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -32,10 +31,8 @@ ${listReservations_ByCompositionQuery == null }
     <!-- <script src="build/react-with-addons.min.js"></script> -->
     
     <script src="<%= request.getContextPath() %>/js/jquery.min.js"></script>
-    <script src="<%= request.getContextPath() %>/js/jquery-ui.min.js"></script>
     <script src="<%= request.getContextPath() %>/js/bootstrap.min.js"></script>
-    <script src="<%= request.getContextPath() %>/js/babel.min.js"></script>
-    <script type="text/jsx" src="<%= request.getContextPath() %>/back-end/reservation/js/listReservations.jsx"></script>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/front-end/store/css/store_main.css">
   </head>
 <body>
 <a href="<%= request.getContextPath() %>/front-end/chenken_index.jsp">home</a>
@@ -57,13 +54,10 @@ ${listReservations_ByCompositionQuery == null }
 
 
 
-<FORM method="post" id="submitForm" action="<%= request.getContextPath() %>/reservation/reservation.do">
+<FORM method="post" action="<%= request.getContextPath() %>/reservation/reservation.do">
 	
 	<input type="hidden" name="action" value="listReservations_ByCompositionQuery">
-	<input type="hidden" name="updateResvno" value="">
 	<input type="hidden" name="whichPage" value="${requestScope.whichPage }">
-	<input type="hidden" name="requestURL" value="<%= request.getRequestURL()%>">
-	<input type="text" name="resvno" placeholder="resvno" value="${param.resvno}">
 	<input type="text" name="memname" placeholder="memname" value="${param.memname}">
 	<input type="text" name="memno" placeholder="memno" value="${param.memno }">
 	<input type="text" name="memid" placeholder="memid" value="${param.memid }">
@@ -97,42 +91,25 @@ ${listReservations_ByCompositionQuery == null }
 </FORM>
 
 <script>
-	jQuery(function() {
-		submitForm = document.getElementById('submitForm');
-		updateResvnoInput = submitForm.querySelector('input[name="updateResvno"]');
-		actionInput = submitForm.querySelector('input[name="action"]');
-		whichPage = document.querySelector('input[name="whichPage"]');
-		form = document.querySelector('form');
-		newPage = document.getElementById('newPage');
-		prevPage = document.getElementById('prevPage');
-		nextPage = document.getElementById('nextPage');
-		newPage.addEventListener('click', function(e) {
-			whichPage.value = '1';
+	var whichPage = document.querySelector('input[name="whichPage"]');
+	var form = document.querySelector('form');
+	var newPage = document.getElementById('newPage');
+	var prevPage = document.getElementById('prevPage');
+	var nextPage = document.getElementById('nextPage');
+	newPage.addEventListener('click', function(e) {
+		whichPage.value = '1';
+		form.submit();
+	}, false);
+	prevPage.addEventListener('click', function(e) {
+		if (whichPage.value != '1') {
+			whichPage.value = parseInt(whichPage.value) - 1;
 			form.submit();
-		}, false);
-		prevPage.addEventListener('click', function(e) {
-			if (whichPage.value != '1') {
-				whichPage.value = parseInt(whichPage.value) - 1;
-				form.submit();
-			}
-		}, false);
-		nextPage.addEventListener('click', function(e) {
-			whichPage.value = parseInt(whichPage.value) + 1;
-			form.submit();
-		}, false);
-		updateBtns = document.querySelectorAll('table input[name="updateBtn"]');
-		var len = updateBtns.length;
-		for (var i = 0; i < len; i++) {
-			updateBtns[i].addEventListener('click', function() {
-				updateResvnoInput.value = this.dataset.resvno;
-				submitForm.action = '<%=request.getContextPath()%>/reservation/reservation.do';
-				actionInput.value = 'getOne_For_Update';
-				submitForm.submit();
-			}, false);
 		}
-		
-		
-	}); 
+	}, false);
+	nextPage.addEventListener('click', function(e) {
+		whichPage.value = parseInt(whichPage.value) + 1;
+		form.submit();
+	}, false);
 </script>
 
 <table border='1' bordercolor='#CCCCFF' width='800'>
@@ -167,7 +144,7 @@ ${listReservations_ByCompositionQuery == null }
 			<td>${reservationVO.resvstate}</td>
 			<td>
 			  <FORM METHOD="post" ACTION="<%=request.getContextPath()%>/reservation/reservation.do">
-			    <input type="button" name="updateBtn" value="修改" data-resvno="${reservationVO.resvno}"> 
+			    <input type="submit" value="修改"> 
 			    <input type="hidden" name="resvno" value="${reservationVO.resvno}">
 			    <input type="hidden" name="action" value="getOne_For_Update">
 			</td></FORM>
@@ -181,26 +158,9 @@ ${listReservations_ByCompositionQuery == null }
 		</tr>
 	</c:forEach>
 </table>
-
-<div id="content">
-</div>	
-
-<script type="text/jsx">
-	var url = '<%=request.getContextPath()%>/reservation/reservation.do';
-	var heads = {
-		"resvno":"訂位編號",
-		"memno":"訂位會員",
-		"teamno":"揪團編號",
-		"tableno":"桌位編號",
-		"resvdate":"訂位日期",
-		"resvperiod":"訂位時間",
-		"resvstate":"訂位狀態",
-	};
-	var immutable = [1, 0, 0, 0, 0, 0, 0];
-	var data = <%=jsonArray.toString() %>;
-	ReactDOM.render(<Excel heads={heads} initialData={data} url={url} immutable={immutable}/>,
-			document.getElementById('content'));
-</script>
+<FORM>
+	
+</FORM>
 
 </body>
 </html>

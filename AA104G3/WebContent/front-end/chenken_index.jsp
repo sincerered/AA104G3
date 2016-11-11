@@ -7,6 +7,11 @@
 <title>Insert title here</title>
 </head>
 <body>
+<%
+String kerker = "dsfsd";
+pageContext.setAttribute("kerker", kerker);
+%>
+
 	${errorMsgs }
 	<br>
 	stono =  ${stono }

@@ -8,7 +8,7 @@ public class StotableService {
 	private StotableDAO_interface dao;
 	
 	public StotableService() {
-		dao = new StotableDAO();
+		dao = new StotableJNDIDAO();
 	}
 	
 	public StotableVO addStotable(String tableno, String stono, Integer tablemin, Integer tablemax, Integer tablecount, Integer tablestate) {

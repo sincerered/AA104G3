@@ -13,7 +13,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-public class Store_commentDAO implements Store_commentDAO_interface {
+public class Store_commentJNDIDAO implements Store_commentDAO_interface {
 	private static DataSource ds;
 	static {
 		try {

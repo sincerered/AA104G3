@@ -15,7 +15,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-public class StoreDAO implements StoreDAO_interface{
+public class StoreJNDIDAO implements StoreDAO_interface{
 	private static DataSource ds = null;
 	static {
 		try {

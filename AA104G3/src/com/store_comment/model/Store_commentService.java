@@ -7,7 +7,7 @@ public class Store_commentService {
 	private Store_commentDAO_interface dao;
 	
 	public Store_commentService() {
-		dao = new Store_commentDAO();
+		dao = new Store_commentJNDIDAO();
 	}
 	
 	public Store_commentVO addStore_Comment(String storecomno, String memno, String stono, String comdetail, Date comdate, Integer stoscore) {

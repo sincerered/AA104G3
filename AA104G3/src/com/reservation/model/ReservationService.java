@@ -3,12 +3,15 @@ package com.reservation.model;
 import java.sql.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.ServletException;
 
 public class ReservationService {
 	private ReservationDAO_interface dao;
 	
 	public ReservationService() {
-		dao = new ReservationDAO();
+		dao = new ReservationJNDIDAO();
 	}
 	
 	public ReservationVO addReservation(String resvno, String memno, String tableno, Date resvdate, String resvperiod, String teamno, String resvstate) {
@@ -37,6 +40,11 @@ public class ReservationService {
 		return reservationVO;		
 	}
 
+	public Set<ReservationVO> updateReservations(Set<ReservationVO> set) throws ServletException {
+		dao.updates(set);
+		return set;		
+	}
+	
 	public ReservationVO updateReservation(ReservationVO reservationVO) {
 		dao.update(reservationVO);
 		return reservationVO;		
