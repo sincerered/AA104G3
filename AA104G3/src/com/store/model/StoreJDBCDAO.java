@@ -359,7 +359,7 @@ public class StoreJDBCDAO implements StoreDAO_interface{
 	}
 	
 	@Override
-	public Set<StoreVO> getAll(Map<String, String[]> map) {
+	public List<StoreVO> getAll(Map<String, String[]> map) {
 		
 		return null;
 	}

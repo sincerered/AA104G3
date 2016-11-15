@@ -12,6 +12,7 @@
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
         this._restoreAll = this._restoreAll.bind(this);
         this._restore = this._restore.bind(this);
+        this.timepicker = this.timepicker.bind(this);
         this.state = {
           data: props.initialData,
           sortby: null,
@@ -140,10 +141,12 @@
         		keys.forEach((key, index) => {initialData[key] = data[index]});
         		self.setState({
         			updateColorClass: 'success',
-        			initialData: initialData,
+        			
         			
         		});
-        	} else if (resData === 'rollback') {
+        	} else {
+        		console.log(resData);
+        		console.log(self.state);
         		self.setState({updateColorClass: 'danger'});
         	}
           },
@@ -203,6 +206,9 @@
           </td>
         </tr>);
       }
+      
+      
+      
       columnData(data, columnIndex) {
         var content = data;
         var edit = this.state.edit;
@@ -216,15 +222,22 @@
               content = value;
             }
           }
-          var strLen = key.length;
-          var substring = key.substring(strLen - 4);
-          if (substring === 'date' || substring === 'Date') {
+          
+          if (key.search(/[Dd]ate$/) != -1) {
         	  console.log('date');
         	  return (
         	            <td>
         	            <input data-row={rowTemp} type="date" onFocus={this._save} defaultValue={content} data-key={key}/>
         	            </td>
         	          );  
+          } else if (false) {
+        	return (
+        		<td>
+        			<input data-row={rowTemp} type="hidden" onChange={this._save} defaultValue={content} data-key={key}/>
+        			
+        			
+        		</td>
+        	);  
           } else {
         	  console.log('text');
         	  return (
@@ -244,6 +257,11 @@
 
         return (<td key={columnIndex} data-row={rowTemp} onDoubleClick={this._showEditor}>{content}</td>);
       }
+      
+      timepicker(content, row, key) {
+    	  
+      }
+      
       render() {
     	 
         return (

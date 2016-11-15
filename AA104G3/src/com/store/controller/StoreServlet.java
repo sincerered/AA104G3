@@ -2,6 +2,7 @@ package com.store.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +39,7 @@ public class StoreServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doPost(req, res);
+
 	}
 
 	/**
@@ -46,6 +48,43 @@ public class StoreServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		req.setCharacterEncoding("utf-8");
 		String action = req.getParameter("action");
+		
+		if ("confirm_stoid".equals(action)) {
+			List<String> errorMsgs = new LinkedList<String>();
+			req.setAttribute("errorMsgs", errorMsgs);
+			try {
+				
+				String stoid = req.getParameter("stoid");
+				res.setCharacterEncoding("utf-8");
+				PrintWriter out = res.getWriter();
+				
+				if (stoid == null || stoid.trim().length() == 0) {
+					errorMsgs.add("請輸入帳號");
+				} else if (!stoid.matches("^[\\p{Punct}\\w]{6, 32}$")) {
+					errorMsgs.add("帳號只能包含英文數字和標點符號");
+				} 
+				
+				if (!errorMsgs.isEmpty()) {
+					out.write(errorMsgs.get(0));
+					return;
+				}
+				
+				StoreService storeSvc = new StoreService();
+				StoreVO storeVO = storeSvc.getOneByStoid(stoid);
+				
+				if (storeVO != null) {
+					out.write("帳號已被使用");
+				} else {
+					out.write("true");
+				}
+				
+				return;
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
+			
+		}
+		
 		if ("register".equals(action)) {
 			
 			List<String> errorMsgs = new LinkedList<String>();
@@ -82,7 +121,7 @@ public class StoreServlet extends HttpServlet {
 				}
 				
 				
-				
+				return;
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}
@@ -152,12 +191,14 @@ public class StoreServlet extends HttpServlet {
 					errorMsgs.add("帳號或密碼錯誤");
 				}
 				if (!errorMsgs.isEmpty()) {
-					RequestDispatcher failureView = req.getRequestDispatcher("/front-end/store/login.jsp");
+					RequestDispatcher failureView = req.getRequestDispatcher("/front-end/login.jsp");
 					failureView.forward(req, res);
 					return;
 				}
+				storeVO.setStopic(null);
+				storeVO.setStoproof(null);
 				HttpSession session = req.getSession();
-				session.setAttribute("stono", storeVO.getStono());
+				session.setAttribute("storeVO", storeVO);
 				res.sendRedirect(req.getContextPath() + "/front-end/chenken_index.jsp");
 				return;
 				
@@ -171,17 +212,17 @@ public class StoreServlet extends HttpServlet {
 			req.setAttribute("errorMsgs", errorMsgs);
 			try {
 				String stono = req.getParameter("stono");
-				if (stono == null) {
+				if (stono == null || stono.trim().length() == 0) {
 					errorMsgs.add("請選擇店家");
 					return;
 				}
 				StoreService storeSvc = new StoreService();
 				
 				StoreVO storeVO = storeSvc.getOneStore(stono);
-				
+				System.out.println(storeVO.getStopic());
 				ServletOutputStream out = res.getOutputStream();
 				out.write(storeVO.getStopic());
-				
+				return;
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}
@@ -190,18 +231,19 @@ public class StoreServlet extends HttpServlet {
 		if ("logout".equals(action)) {
 			req.getSession().invalidate();
 			res.sendRedirect(req.getContextPath() + "/front-end/chenken_index.jsp");
+			return;
 		}
 
 		if ("get_store_update_pwd".equals(action)) {
 			HttpSession session = req.getSession();
 			String stono = (String)session.getAttribute("stono");
 			try {
-				if (stono == null || stono.trim().length() == 0) {
-					String url = "/front-end/store/register.jsp?requestURL=" + req.getServletPath();
-					RequestDispatcher failureView = req.getRequestDispatcher(url);
-					
-					return;
-				}
+//				if (stono == null || stono.trim().length() == 0) {
+//					String url = "/front-end/store/register.jsp?requestURL=" + req.getServletPath();
+//					RequestDispatcher failureView = req.getRequestDispatcher(url);
+//					
+//					return;
+//				}
 				StoreService storeSvc = new StoreService();
 				StoreVO storeVO = storeSvc.getOneStore(stono);
 				if (storeVO == null) {
@@ -225,13 +267,13 @@ public class StoreServlet extends HttpServlet {
 			req.setAttribute("errorMsgs", errorMsgs);
 			try {
 				HttpSession session = req.getSession();
-				String stono = (String)session.getAttribute("stono");
-				if (stono == null || stono.trim().length() == 0) {
-					res.sendRedirect("/front-end/chenken_index.jsp");
-				}
+//				String stono = (String)session.getAttribute("stono");
+//				if (stono == null || stono.trim().length() == 0) {
+//					res.sendRedirect("/front-end/chenken_index.jsp");
+//				}
 				
 				StoreService storeSvc = new StoreService();
-				StoreVO storeVO = storeSvc.getOneStore(stono);
+				StoreVO storeVO = (StoreVO)session.getAttribute("storeVO");
 				
 				String stopwOld = req.getParameter("stopwOld");
 				if (stopwOld == null || stopwOld.trim().length() == 0) {
@@ -319,32 +361,19 @@ public class StoreServlet extends HttpServlet {
 		}
 		if ("get_store_main".equals(action)) {
 			HttpSession session = req.getSession();
-			String stono = (String)session.getAttribute("stono");
-			String memno = (String)session.getAttribute("memno");
+			
 			try {
-				if (stono == null || stono.trim().length() == 0) {
-					res.sendRedirect(req.getContextPath() + "/front-end/chenken_index.jsp");
-					return;
-				}
-				if (memno != null) {
-					res.sendRedirect(req.getContextPath() + "/front-end/chenken_index.jsp");
-					return;					
-				}
 				StoreService storeSvc = new StoreService();
-				StoreVO storeVO = storeSvc.getOneStore(stono);
+				StoreVO storeVO = (StoreVO)session.getAttribute("storeVO");
 				if (storeVO == null) {
 					System.out.println("stono in session but storeVO is null");
 					res.sendRedirect(req.getContextPath() + "/front-end/chenken_index.jsp");
 					return;
 				}
-				
-				
-				
 				req.setAttribute("storeVO", storeVO);
 				RequestDispatcher successView = req.getRequestDispatcher("/front-end/store/store_main.jsp");
 				successView.forward(req, res);
 				return;
-				
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}
@@ -353,13 +382,8 @@ public class StoreServlet extends HttpServlet {
 		if ("get_store_resv".equals(action)) {
 			try {
 				HttpSession session = req.getSession();
-				String stono = (String)session.getAttribute("stono");
-				if (stono == null || stono.trim().length() == 0) {
-					res.sendRedirect(req.getContextPath() + "/front-end/chenken_index.jsp");
-					return;
-				}
+				StoreVO storeVO = (StoreVO)session.getAttribute("storeVO");
 				StoreService storeSvc = new StoreService();
-				StoreVO storeVO = storeSvc.getOneStore(stono);
 				if (storeVO == null) {
 					System.out.println("stono in session but storeVO is null");
 					res.sendRedirect(req.getContextPath() + "/front-end/chenken_index.jsp");
@@ -380,19 +404,10 @@ public class StoreServlet extends HttpServlet {
 		
 		if ("get_store_detail".equals(action)) {
 			HttpSession session = req.getSession();
-			String stono = (String)session.getAttribute("stono");
 			try {
-				if (stono == null || stono.trim().length() == 0) {
-					res.sendRedirect(req.getContextPath() + "/front-end/chenken_index.jsp");
-					return;
-				}
+				StoreVO storeVO = (StoreVO)session.getAttribute("storeVO");
+				
 				StoreService storeSvc = new StoreService();
-				StoreVO storeVO = storeSvc.getOneStore(stono);
-				if (storeVO == null) {
-					System.out.println("stono in session but storeVO is null");
-					res.sendRedirect(req.getContextPath() + "/front-end/chenken_index.jsp");
-					return;
-				}
 				
 				
 				
@@ -457,15 +472,83 @@ public class StoreServlet extends HttpServlet {
 				byte[] bytes = new byte[(int)fileSize];
 				inputStream.read(bytes);
 				StoreService storeSvc = new StoreService();
+				
+				StoreVO storeVO = (StoreVO)req.getSession().getAttribute("storeVO");
+				storeVO = storeSvc.getOneStore(storeVO.getStono());
+				storeVO.setStopic(bytes);
+				storeSvc.updateStore(storeVO);
+				RequestDispatcher successView = req.getRequestDispatcher("/front-end/store/store_update_image.jsp");
+				successView.forward(req, res);
+				return;
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
+			
+		}
+
+		if ("update".equals(action)) {
+			List<String> errorMsgs = new LinkedList<String>();
+			req.setAttribute("errorMsgs", errorMsgs);
+			try {
+				Part part = req.getPart("stopic");
+				if (part == null) {
+					System.out.println("stopic is null");
+					errorMsgs.add("請選擇圖片");
+				}
+				long fileSize = part.getSize();
+				if (fileSize == 0) {
+					errorMsgs.add("請選擇圖片");
+				}
+				if (!errorMsgs.isEmpty()) {
+					RequestDispatcher failureView = req.getRequestDispatcher("/front-end/store/store_update_image.jsp");
+					failureView.forward(req, res);
+					return;
+				}
+				
+				InputStream inputStream = part.getInputStream();
+				byte[] bytes = new byte[(int)fileSize];
+				inputStream.read(bytes);
+				StoreService storeSvc = new StoreService();
 				StoreVO storeVO = storeSvc.getOneStore((String)req.getSession().getAttribute("stono"));
 				storeVO.setStopic(bytes);
 				storeSvc.updateStore(storeVO);
 				RequestDispatcher successView = req.getRequestDispatcher("/front-end/store/store_update_image.jsp");
 				successView.forward(req, res);
+				return;
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}
 			
+		}
+
+
+		
+		if ("getOne_for_display".equals(action)) {
+			List<String> errorMsgs = new ArrayList<String>();
+			req.setAttribute("errorMsgs", errorMsgs);
+			
+			try {
+				String stono = req.getParameter("stono");
+				if (stono == null || stono.trim().length() == 0) {
+					res.sendRedirect(req.getContextPath() + "/front-end/index.jsp");
+					return;
+				}
+				StoreService storeSvc = new StoreService();
+				StoreVO storeVO = storeSvc.getOneStore(stono);
+				if (storeVO == null) {
+					System.out.println("stono in session but storeVO is null");
+					res.sendRedirect(req.getContextPath() + "/front-end/chenken_index.jsp");
+					return;
+				}
+				
+				req.setAttribute("storeVO", storeVO);
+				RequestDispatcher successView = req.getRequestDispatcher("/front-end/store/store_page.jsp");
+				successView.forward(req, res);
+				return;
+				
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}		
 		}
 		
 	}

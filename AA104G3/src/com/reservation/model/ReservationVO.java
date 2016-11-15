@@ -2,14 +2,17 @@ package com.reservation.model;
 
 import java.sql.Date;
 
+import com.stotable.model.StotableVO;
+
 public class ReservationVO {
 	private String resvno;
 	private String memno;
-	private String tableno;
+	private StotableVO stotableVO;
 	private Date resvdate;
 	private String resvperiod;
 	private String teamno;
 	private String resvstate;
+	
 	public String getResvno() {
 		return resvno;
 	}
@@ -22,11 +25,11 @@ public class ReservationVO {
 	public void setMemno(String memno) {
 		this.memno = memno;
 	}
-	public String getTableno() {
-		return tableno;
+	public StotableVO getStotableVO() {
+		return stotableVO;
 	}
-	public void setTableno(String tableno) {
-		this.tableno = tableno;
+	public void setStotableVO(StotableVO stotableVO) {
+		this.stotableVO = stotableVO;
 	}
 	public Date getResvdate() {
 		return resvdate;

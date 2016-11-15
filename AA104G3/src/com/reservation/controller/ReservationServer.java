@@ -14,11 +14,11 @@ import javax.websocket.server.ServerEndpoint;
 import org.json.JSONObject;
 
 import com.google.gson.JsonObject;
-import com.reservation.model.ReservationService;
-import com.reservation.model.ReservationVO;
+import com.reservation.model_jndi.ReservationService;
+import com.reservation.model_jndi.ReservationVO;
 import com.store.model.StoreService;
-import com.stotable.model.StotableService;
-import com.stotable.model.StotableVO;
+import com.stotable.model_jndi.StotableService;
+import com.stotable.model_jndi.StotableVO;
 
 
 @ServerEndpoint("/ReservationServer/{memno}/{stono}")

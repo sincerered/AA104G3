@@ -9,7 +9,7 @@ import javax.servlet.ServletException;
 public interface ReservationDAO_interface {
 	public void insert(ReservationVO reservationVO);
 	public void update(ReservationVO reservationVO);
-	public void updates(Set<ReservationVO> set) throws ServletException;
+	public void updates(Set<ReservationVO> set);
 	public void delete(String resvno);
 	public ReservationVO findByPrimaryKey(String resvno);
 	public List<ReservationVO> getAll();

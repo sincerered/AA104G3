@@ -1,5 +1,10 @@
 package com.store.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import com.stotable.model.StotableVO;
+
 public class StoreVO {
 	private String stono;
 	private String stoid;
@@ -19,6 +24,7 @@ public class StoreVO {
 	private String bankname;
 	private String accountname;
 	private String accountno;
+	private Set<StotableVO> stotables = new HashSet<StotableVO>();
 	
 	public String getStono() {
 		return stono;
@@ -127,5 +133,11 @@ public class StoreVO {
 	}
 	public void setAccountno(String accountno) {
 		this.accountno = accountno;
+	}
+	public Set<StotableVO> getStotables() {
+		return stotables;
+	}
+	public void setStotables(Set<StotableVO> stotables) {
+		this.stotables = stotables;
 	}
 }

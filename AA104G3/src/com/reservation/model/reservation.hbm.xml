@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.reservation.model.ReservationVO" table="reservation">
+
+		<id name="resvno" column="resvno">
+			<generator class="sequence">
+			  <param name="sequence">reservation_seq</param>
+			</generator>
+		</id>
+
+		<property name="memno" column="memno" />
+		<many-to-one name="stotableVO" class="com.stotable.model.StotableVO" lazy="false" cascade="none">
+			<column name="tableno" />
+		</many-to-one>
+		<property name="resvdate" column="resvdate" />
+		<property name="resvperiod" column="resvperiod" />
+		<property name="teamno" column="teamno" />
+		<property name="resvstate" column="resvstate" />
+
+
+	</class>
+</hibernate-mapping>

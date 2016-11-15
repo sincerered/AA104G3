@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=BIG5"
+<%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="BIG5" import="com.store.model.StoreVO" import="java.util.GregorianCalendar"
     import="java.util.Calendar"
     import="java.text.SimpleDateFormat"
@@ -32,8 +32,8 @@
 <table border='1' cellpadding='5' cellspacing='0' width='400'>
 	<tr bgcolor='#CCCCFF' align='center' valign='middle' height='20'>
 		<td>
-		<h3>員工資料修改 - update_emp_input.jsp</h3>
-		<a href="<%=request.getContextPath()%>/select_page.jsp"><img src="images/back1.gif" width="100" height="32" border="0">回首頁</a></td>
+		<h3>訂位資料修改 - update_reaervation_input.jsp</h3>
+		<a href="<%=request.getContextPath()%>/front-end/chenken_index.jsp"><img src="images/back1.gif" width="100" height="32" border="0">回首頁</a></td>
 	</tr>
 </table>
 
@@ -57,17 +57,17 @@
 	</tr>
 	<tr>
 		<td>訂位姓名:</td>
-		<td><input type="TEXT" name="ename" size="45" value="${reservationVO.memno }" /></td>
+		<td><input type="TEXT" name="memno" size="45" value="${reservationVO.memno }" /></td>
 	</tr>
 	<tr>
 		<td>桌位:</td>
-		<td><input type="TEXT" name="job" size="45"	value="${reservationVO.tableno }" /></td>
+		<td><input type="TEXT" name="tableno" size="45"	value="${reservationVO.stotableVO.tableno }" /></td>
 	</tr>
 	<tr>
 		<td>訂位日期:</td>
 		<td bgcolor="#CCCCFF">
 		    <input class="cal-TextBox"
-			onFocus="this.blur()" size="9" readonly type="text" name="hiredate" value="${reservationVO.resvdate }">
+			onFocus="this.blur()" size="9" readonly type="text" name="resvdate" value="${reservationVO.resvdate }">
 			<a class="so-BtnLink"
 			href="javascript:calClick();return false;"
 			onmouseover="calSwapImg('BTN_date', 'img_Date_OVER',true);"
@@ -78,11 +78,11 @@
 	</tr>
 	<tr>
 		<td>訂位時間:</td>
-		<td><input type="TEXT" name="sal" size="45"	value="${reservationVO.resvperiod }" /></td>
+		<td><input type="TEXT" name="resvperiod" size="45"	value="${reservationVO.resvperiod }" /></td>
 	</tr>
 	<tr>
 		<td>訂位揪團:</td>
-		<td><input type="TEXT" name="comm" size="45" value="${reservationVO.teamno }" /></td>
+		<td><input type="TEXT" name="teamno" size="45" value="${reservationVO.teamno }" /></td>
 	</tr>
 
 	
@@ -95,8 +95,11 @@
 <br>
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="resvno" value="${reservationVO.resvno }">
-<input type="hidden" name="requestURL" value="<%=request.getParameter("requestURL")%>"><!--接收原送出修改的來源網頁路徑後,再送給Controller準備轉交之用-->
-<input type="hidden" name="whichPage" value="<%=request.getParameter("whichPage")%>">  <!--只用於:istAllEmp.jsp-->
+
+<input type="hidden" name="requestURL" value="${param.requestURL}"><!--接收原送出修改的來源網頁路徑後,再送給Controller準備轉交之用-->
+<input type="hidden" name="whichPage" value="${param.whichPage }">  <!--只用於:istAllEmp.jsp-->
+<input type="hidden" name="rowsPerPage" value="${param.rowsPerPage }">  <!--只用於:istAllEmp.jsp-->
+<input type="hidden" name="compositeQuery" value="${param.compositeQuery }">  <!--只用於:istAllEmp.jsp-->
 <input type="submit" value="送出修改"></FORM>
 
 <br>送出修改的來源網頁路徑:<br><b>

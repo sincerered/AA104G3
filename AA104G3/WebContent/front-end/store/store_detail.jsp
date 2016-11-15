@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="BIG5"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<c:if test="${empty sessionScope.stono }">
+<c:if test="${empty sessionScope.storeVO }">
 	<jsp:forward page="/front-end/chenken_index.jsp"></jsp:forward>
 </c:if>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -54,7 +54,7 @@
 							<ul class="nav nav-pills">
 								<li role="presentation" class=""><a href="<%=request.getContextPath()%>/store/store.do?action=get_store_update_pwd">更改密碼</a></li>
 								<li role="presentation"><a
-									href="<%=request.getContextPath()%>/store/store.do?action=get_store_update_image">更改圖片</a></li>
+									href="<%=request.getContextPath()%>/front-end/store/store_update_image.jsp">更改圖片</a></li>
 								<li role="presentation"><a href="#">Messages</a></li>
 							</ul>
 							<div class="chenken-store-detail-list">

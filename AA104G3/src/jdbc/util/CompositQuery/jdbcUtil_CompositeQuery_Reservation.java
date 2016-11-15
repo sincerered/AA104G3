@@ -15,7 +15,7 @@ public class jdbcUtil_CompositeQuery_Reservation {
 		} else if ("resvdateMax".equals(columnName)) {
 			aCondition = "to_char(resvdate, 'yyyy-mm-dd')<='" + value + "'"; 
 		} else if ("resvdateMin".equals(columnName)) {
-			aCondition = "to_char(resvdate, 'yyyy-mm-dd')>='" + value + "'"; 
+			aCondition = "resvdate >= sysdate " + value; 
 		} else if ("resvperiodMax".equals(columnName)) {
 			aCondition = "instr(resvperiod, '1')<=" + value;
 		} else if ("resvperiodMin".equals(columnName)) {
@@ -34,6 +34,7 @@ public class jdbcUtil_CompositeQuery_Reservation {
 		notColumnName.add("action");
 		notColumnName.add("rowsPerPage");
 		notColumnName.add("whichPage");
+		notColumnName.add("requestURL");
 		Set<String> keys = map.keySet();
 		StringBuffer whereCondition = new StringBuffer();
 		int count = 0;

@@ -2,7 +2,9 @@ package com.reservation.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -15,12 +17,14 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.reservation.model.ReservationService;
 import com.reservation.model.ReservationVO;
+import com.stotable.model.StotableVO;
 
 /**
  * Servlet implementation class ReservationServlet
@@ -49,15 +53,6 @@ public class ReservationServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		req.setCharacterEncoding("utf-8");
 		String action = req.getParameter("action");
-		Map<String, String[]> ker = req.getParameterMap();
-		for (String str : ker.keySet()) {
-			System.out.println("map   " + str + "    " + ker.get(str)[0]);;
-		}
-		System.out.println(req.getServletPath());
-		System.out.println(req.getPathInfo());
-		System.out.println(req.getRequestURL());
-		System.out.println(req.getRequestURI());
-		System.out.println(req.getQueryString());
 		if ("listReservations_ByCompositionQuery".equals(action)) {
 			List<String> errorMsgs = new LinkedList<String>();
 			// Store this set in the request scope, in case we need to
@@ -69,24 +64,46 @@ public class ReservationServlet extends HttpServlet {
 				/***************************1.將輸入資料轉為Map**********************************/ 
 				//採用Map<String,String[]> getParameterMap()的方法 
 				//注意:an immutable java.util.Map 
-				Map<String, String[]> map = req.getParameterMap();
+				HttpSession session = req.getSession();
+				
+				String initWhichPage = req.getParameter("whichPage");
+				
+				String compositeQuery = req.getParameter("compositeQuery");
+				System.out.println("compositeQuery:    " + compositeQuery);
+				if (compositeQuery == null || compositeQuery.trim().length() == 0) compositeQuery = "{}";
+				
+				HashMap<String, String[]> map = new HashMap<String, String[]>();
+				JSONObject jsonObject = new JSONObject(compositeQuery);
+				Iterator<String> ite = jsonObject.keys();
+				while(ite.hasNext()) {
+					String key = ite.next();
+					map.put(key, new String[] {jsonObject.getString(key)});
+				}
+				
+				req.setAttribute("queryMap", map);
+				
+				if (initWhichPage == null || initWhichPage.trim().length() == 0) {
+					initWhichPage = "1";
+				}
+				
+				
 				
 				/***************************2.開始複合查詢***************************************/
 				ReservationService reservationSvc = new ReservationService();
 				List<ReservationVO> list  = reservationSvc.getAll(map);
 				
+				
+				
 				int rowNumber = list.size();
-				int rowsPerPage = 0; 
-				int whichPage = 0; 
+				int rowsPerPage = 0;
+				int whichPage = Integer.parseInt(initWhichPage);
 				int pageNumber = 0;
 				int[] pageIndexArray = null;
 				
+				System.out.println(req.getParameter("rowsPerPage"));
 				String initRowsPerPage = req.getParameter("rowsPerPage");
-				if (initRowsPerPage == null) rowsPerPage = 10;
+				if (initRowsPerPage == null || initRowsPerPage.trim().length() == 0) rowsPerPage = 10;
 				else rowsPerPage = Integer.parseInt(initRowsPerPage);
-				String initWhichPage = req.getParameter("whichPage");
-				if (initWhichPage == null) whichPage = 1;
-				else whichPage = Integer.parseInt(initWhichPage);
 				
 				if (rowNumber == 0)
 					pageNumber = 1;
@@ -102,12 +119,11 @@ public class ReservationServlet extends HttpServlet {
 				pageIndexArray = IntStream.rangeClosed(1, pageNumber).toArray();
 				
 				req.setAttribute("rowNumber", rowNumber);
-				req.setAttribute("rowsPerPage", rowsPerPage);
-				req.setAttribute("whichPage", whichPage);
 				req.setAttribute("pageNumber", pageNumber);
 				req.setAttribute("pageIndexArray", pageIndexArray);
 				
-				
+				System.out.println("0000000000000 list.size()      " + list.size());
+				System.out.println(list.get(0).getMemno());
 				/***************************3.查詢完成,準備轉交(Send the Success view)************/
 				req.setAttribute("listReservations_ByCompositionQuery", list); // 資料庫取出的list物件,存入request
 				RequestDispatcher successView = req.getRequestDispatcher("/back-end/reservation/listReservations_ByCompositionQuery.jsp"); // 成功轉交listEmps_ByCompositeQuery.jsp
@@ -133,7 +149,7 @@ public class ReservationServlet extends HttpServlet {
 			
 			try {
 				/***************************1.接收請求參數****************************************/
-				String resvno = req.getParameter("updateResvno");
+				String resvno = req.getParameter("resvno");
 				
 				if (resvno == null || resvno.trim().length() == 0) {
 					errorMsgs.add("請輸入訂位編號");
@@ -169,6 +185,7 @@ public class ReservationServlet extends HttpServlet {
 			// Store this set in the request scope, in case we need to
 			// send the ErrorPage view.
 			req.setAttribute("errorMsgs", errorMsgs);
+			res.setCharacterEncoding("utf-8");
 			PrintWriter out = res.getWriter();
 		
 			try {
@@ -179,20 +196,71 @@ public class ReservationServlet extends HttpServlet {
 				ReservationVO reservationVO = null;
 				Set<ReservationVO> set = new HashSet<ReservationVO>();
 				for (int i = 0; i < len; i++) {
+					
 					jsonObject = jsonArray.getJSONObject(i);
-					reservationVO = new ReservationVO();
-					reservationVO.setResvno(jsonObject.getString("resvno").trim());
-					reservationVO.setMemno(jsonObject.getString("memno").trim());
-					reservationVO.setTableno(jsonObject.getString("tableno").trim());
-					reservationVO.setResvdate(java.sql.Date.valueOf(jsonObject.getString("resvdate").trim()));
-					reservationVO.setResvperiod(jsonObject.getString("resvperiod").trim());
-					String teamno = null;
-					try {
-						teamno = jsonObject.getString("teamno").trim();
-					} catch (Exception e) {
+					
+					String resvno = jsonObject.getString("resvno");
+					if (resvno == null || resvno.trim().length() == 0) {
+						errorMsgs.add("無輸入訂位編號");
+					} else if (!resvno.matches("^\\d{6}$")) {
+						errorMsgs.add("訂位編號只能是6位的數字");
 					}
+					
+					String memno = jsonObject.getString("memno");
+					if (memno == null || memno.trim().length() == 0) {
+						errorMsgs.add("請輸入會員編號");
+					} else if (!memno.matches("^\\d{6}$")) {
+						errorMsgs.add("會員編號只能是6位的數字");
+					}
+					String tableno = jsonObject.getString("tableno");
+					if (tableno == null || tableno.trim().length() == 0) {
+						errorMsgs.add("請輸入桌位編號");
+					} else if (!tableno.matches("^\\d{6}$")) {
+						errorMsgs.add("桌位編號只能是6位的數字");
+					}
+					String resvdate = jsonObject.getString("resvdate");
+					if (resvdate == null || resvdate.trim().length() == 0) {
+						errorMsgs.add("請輸入訂位日期");
+					}
+					java.sql.Date date = null;
+					try {
+						date = java.sql.Date.valueOf(resvdate);
+					} catch (IllegalArgumentException e) {
+						errorMsgs.add("日期格式錯誤,應為yyyy-mm-dd");
+					}
+					String resvperiod = jsonObject.getString("resvperiod");
+					if (resvperiod == null || resvperiod.trim().length() == 0) {
+						errorMsgs.add("請輸入訂位時間");
+					} else if (!resvperiod.matches("^[0-1]{24}$")) {
+						errorMsgs.add("訂位時間格式錯誤");
+					}
+					String teamno = jsonObject.getString("teamno");
+					if (teamno == null || teamno.trim().length() == 0) {
+						teamno = null;
+					} else if (!teamno.matches("^\\d{6}$")) {
+						errorMsgs.add("訂位編號只能是6位的數字或無輸入");
+					}
+					String resvstate = jsonObject.getString("resvstate");
+					if (resvstate == null || resvstate.trim().length() == 0) {
+						errorMsgs.add("無輸入訂位編號");
+					} else if (!resvstate.matches("^\\d{1,2}$")) {
+						errorMsgs.add("訂位狀態只能是1到2位的數字");
+					}				
+					
+					if (!errorMsgs.isEmpty()) {
+						throw new ServletException();
+					}
+					
+					reservationVO = new ReservationVO();
+					reservationVO.setResvno(resvno);
+					reservationVO.setMemno(memno);
+					StotableVO stotableVO = new StotableVO();
+					stotableVO.setTableno(tableno);
+					reservationVO.setStotableVO(stotableVO);
+					reservationVO.setResvdate(date);
+					reservationVO.setResvperiod(resvperiod);
 					reservationVO.setTeamno(teamno);
-					reservationVO.setResvstate(jsonObject.getString("resvstate").trim());
+					reservationVO.setResvstate(resvstate);
 					set.add(reservationVO);
 				}
 				/***************************1.接收請求參數 - 輸入格式的錯誤處理**********************/
@@ -211,7 +279,167 @@ public class ReservationServlet extends HttpServlet {
                 out.print("commit");
 				/***************************其他可能的錯誤處理*************************************/
 			} catch (Exception e) {
-				out.print("rollback");
+				out.print(errorMsgs);
+			}
+		}
+		
+		if ("update".equals(action)) { // 來自update_reservation_input.jsp的請求
+			System.out.println("into resv controller action=update");
+			List<String> errorMsgs = new LinkedList<String>();
+			// Store this set in the request scope, in case we need to
+			// send the ErrorPage view.
+			req.setAttribute("errorMsgs", errorMsgs);
+			ReservationVO reservationVO = null;
+			try {
+				String resvno = req.getParameter("resvno");
+				if (resvno == null || resvno.trim().length() == 0) {
+					errorMsgs.add("無輸入訂位編號");
+				} else if (!resvno.matches("^\\d{6}$")) {
+					errorMsgs.add("訂位編號只能是6位的數字");
+				}
+				
+				String memno = req.getParameter("memno");
+				if (memno == null || memno.trim().length() == 0) {
+					errorMsgs.add("請輸入會員編號");
+				} else if (!memno.matches("^\\d{6}$")) {
+					errorMsgs.add("會員編號只能是6位的數字");
+				}
+				String tableno = req.getParameter("tableno");
+				if (tableno == null || tableno.trim().length() == 0) {
+					errorMsgs.add("請輸入桌位編號");
+				} else if (!tableno.matches("^\\d{6}$")) {
+					errorMsgs.add("桌位編號只能是6位的數字");
+				}
+				String resvdate = req.getParameter("resvdate");
+				if (resvdate == null || resvdate.trim().length() == 0) {
+					errorMsgs.add("請輸入訂位日期");
+				}
+				java.sql.Date date = null;
+				try {
+					date = java.sql.Date.valueOf(resvdate);
+				} catch (IllegalArgumentException e) {
+					errorMsgs.add("日期格式錯誤,應為yyyy-mm-dd");
+					date = new java.sql.Date(System.currentTimeMillis());
+				}
+				String resvperiod = req.getParameter("resvperiod");
+				if (resvperiod == null || resvperiod.trim().length() == 0) {
+					errorMsgs.add("請輸入訂位時間");
+				} else if (!resvperiod.matches("^[0-1]{24}$")) {
+					errorMsgs.add("訂位時間格式錯誤");
+				}
+				String teamno = req.getParameter("teamno");
+				if (teamno == null || teamno.trim().length() == 0) {
+					teamno = null;
+				} else if (!teamno.matches("^\\d{6}$")) {
+					errorMsgs.add("訂位編號只能是6位的數字或無輸入");
+				}
+				String resvstate = req.getParameter("resvstate");
+				if (resvstate == null || resvstate.trim().length() == 0) {
+					errorMsgs.add("無輸入訂位編號");
+				} else if (!resvstate.matches("^\\d{1,2}$")) {
+					errorMsgs.add("訂位狀態只能是1到2位的數字");
+				}				
+				
+			
+				
+				
+				reservationVO = new ReservationVO();
+				reservationVO.setResvno(resvno);
+				reservationVO.setMemno(memno);
+				StotableVO stotableVO = new StotableVO();
+				stotableVO.setTableno(tableno);
+				reservationVO.setStotableVO(stotableVO);
+				reservationVO.setResvdate(date);
+				reservationVO.setResvperiod(resvperiod);
+				reservationVO.setTeamno(teamno);
+				reservationVO.setResvstate(resvstate);
+				
+				if (!errorMsgs.isEmpty()) {
+					req.setAttribute("reservationVO", reservationVO);
+					RequestDispatcher failureView = req
+						.getRequestDispatcher("/back-end/reservation/update_reservation_input.jsp");
+					failureView.forward(req, res);
+				}
+					
+				/***************************1.接收請求參數 - 輸入格式的錯誤處理**********************/
+
+
+				// Send the use back to the form, if there were errors
+				
+				
+				/***************************2.開始修改資料*****************************************/
+				ReservationService reservationSvc = new ReservationService();
+				reservationVO = reservationSvc.updateReservation(resvno, memno, tableno, date, resvperiod, teamno, resvstate);
+				
+				/***************************3.修改完成,準備轉交(Send the Success view)*************/
+				
+				String compositeQuery = req.getParameter("compositeQuery");
+				if (compositeQuery == null || compositeQuery.trim().length() == 0) {
+					compositeQuery = "{}";
+				}
+				
+				HashMap<String, String[]> map = new HashMap<String, String[]>();
+				JSONObject jsonObject = new JSONObject(compositeQuery);
+				Iterator<String> ite = jsonObject.keys();
+				while(ite.hasNext()) {
+					String key = ite.next();
+					map.put(key, new String[] {jsonObject.getString(key)});
+				}
+				
+				req.setAttribute("queryMap", map);
+				
+				List<ReservationVO> list = reservationSvc.getAll(map);
+				
+				
+				
+				String initWhichPage = req.getParameter("whichPage");
+				if (initWhichPage == null || initWhichPage.trim().length() == 0) initWhichPage = "10";
+				int rowNumber = list.size();
+				int rowsPerPage = 0;
+				int whichPage = Integer.parseInt(initWhichPage);
+				int pageNumber = 0;
+				int[] pageIndexArray = null;
+				
+				System.out.println(req.getParameter("rowsPerPage"));
+				String initRowsPerPage = req.getParameter("rowsPerPage");
+				if (initRowsPerPage == null || initRowsPerPage.trim().length() == 0) rowsPerPage = 10;
+				else rowsPerPage = Integer.parseInt(initRowsPerPage);
+				
+				if (rowNumber == 0)
+					pageNumber = 1;
+				else if (rowNumber % rowsPerPage == 0) 
+					pageNumber = rowNumber / rowsPerPage;
+				else pageNumber = rowNumber / rowsPerPage +1;
+				
+				if (whichPage >= pageNumber) {
+					whichPage = pageNumber;
+					list = list.subList((whichPage-1)*rowsPerPage, rowNumber);
+				} else list = list.subList((whichPage-1)*rowsPerPage, whichPage*rowsPerPage);
+				
+				pageIndexArray = IntStream.rangeClosed(1, pageNumber).toArray();
+				
+				req.setAttribute("rowNumber", rowNumber);
+				req.setAttribute("pageNumber", pageNumber);
+				req.setAttribute("pageIndexArray", pageIndexArray);
+				
+				
+				/***************************3.查詢完成,準備轉交(Send the Success view)************/
+				req.setAttribute("listReservations_ByCompositionQuery", list); // 資料庫取出的list物件,存入request
+								
+				
+				req.setAttribute("listReservations_ByCompositionQuery", list);
+				
+				String requestURL = req.getParameter("requestURL");
+                RequestDispatcher successView = req.getRequestDispatcher(requestURL);
+                successView.forward(req, res);
+
+				/***************************其他可能的錯誤處理*************************************/
+			} catch (Exception e) {
+				e.printStackTrace();
+				req.setAttribute("reservationVO", reservationVO);
+				RequestDispatcher failureView = req
+						.getRequestDispatcher("/back-end/reservation/update_reservation_input.jsp");
+					failureView.forward(req, res);
 			}
 		}
 	}

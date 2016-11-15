@@ -63,7 +63,7 @@ public class StoreJNDIDAO implements StoreDAO_interface{
 			
 			pstmt.executeUpdate();
 		}catch(SQLException se){
-			se.printStackTrace();
+			throw new RuntimeException("A database error occur. " + se.getMessage());
 		}finally{
 			if(pstmt != null){
 				try{
@@ -113,7 +113,7 @@ public class StoreJNDIDAO implements StoreDAO_interface{
 			
 			pstmt.executeUpdate();
 		}catch(SQLException se){
-			se.printStackTrace();
+			throw new RuntimeException("A database error occur. " + se.getMessage());
 		}finally{
 			if(pstmt != null){
 				try{
@@ -146,7 +146,7 @@ public class StoreJNDIDAO implements StoreDAO_interface{
 			
 			pstmt.executeUpdate();
 		}catch(SQLException se){
-			se.printStackTrace();
+			throw new RuntimeException("A database error occur. " + se.getMessage());
 		}finally{
 			if(pstmt != null){
 				try{
@@ -206,7 +206,7 @@ public class StoreJNDIDAO implements StoreDAO_interface{
 			
 			
 		}catch(SQLException se){
-			se.printStackTrace();
+			throw new RuntimeException("A database error occur. " + se.getMessage());
 		}finally{
 			if(pstmt != null){
 				try{
@@ -265,7 +265,7 @@ public class StoreJNDIDAO implements StoreDAO_interface{
 				list.add(storeVO);
 			}
 		}catch(SQLException se){
-			se.printStackTrace();
+			throw new RuntimeException("A database error occur. " + se.getMessage());
 		}finally{
 			if(pstmt != null){
 				try{
@@ -325,7 +325,7 @@ public class StoreJNDIDAO implements StoreDAO_interface{
 			
 			
 		}catch(SQLException se){
-			se.printStackTrace();
+			throw new RuntimeException("A database error occur. " + se.getMessage());
 		}finally{
 			if(pstmt != null){
 				try{
@@ -346,7 +346,7 @@ public class StoreJNDIDAO implements StoreDAO_interface{
 	}
 
 	@Override
-	public Set<StoreVO> getAll(Map<String, String[]> map) {
+	public List<StoreVO> getAll(Map<String, String[]> map) {
 		
 		return null;
 	}

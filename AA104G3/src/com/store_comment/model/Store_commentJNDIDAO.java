@@ -48,7 +48,7 @@ public class Store_commentJNDIDAO implements Store_commentDAO_interface {
 			
 			pstmt.executeUpdate();
 		}catch(SQLException se){
-			se.printStackTrace();
+			throw new RuntimeException("A database error occur. " + se.getMessage());
 		}finally{
 			if(pstmt != null){
 				try{
@@ -85,7 +85,7 @@ public class Store_commentJNDIDAO implements Store_commentDAO_interface {
 			
 			pstmt.executeUpdate();
 		}catch(SQLException se){
-			se.printStackTrace();
+			throw new RuntimeException("A database error occur. " + se.getMessage());
 		}finally{
 			if(pstmt != null){
 				try{
@@ -117,7 +117,7 @@ public class Store_commentJNDIDAO implements Store_commentDAO_interface {
 			
 			pstmt.executeUpdate();
 		}catch(SQLException se){
-			se.printStackTrace();
+			throw new RuntimeException("A database error occur. " + se.getMessage());
 		}finally{
 			if(pstmt != null){
 				try{
@@ -163,7 +163,7 @@ public class Store_commentJNDIDAO implements Store_commentDAO_interface {
 			
 			
 		}catch(SQLException se){
-			se.printStackTrace();
+			throw new RuntimeException("A database error occur. " + se.getMessage());
 		}finally{
 			if(pstmt != null){
 				try{
@@ -212,7 +212,7 @@ public class Store_commentJNDIDAO implements Store_commentDAO_interface {
 			
 			
 		}catch(SQLException se){
-			se.printStackTrace();
+			throw new RuntimeException("A database error occur. " + se.getMessage());
 		}finally{
 			if(pstmt != null){
 				try{
@@ -263,7 +263,7 @@ public class Store_commentJNDIDAO implements Store_commentDAO_interface {
 			
 			
 		}catch(SQLException se){
-			se.printStackTrace();
+			throw new RuntimeException("A database error occur. " + se.getMessage());
 		}finally{
 			if(pstmt != null){
 				try{
@@ -314,7 +314,7 @@ public class Store_commentJNDIDAO implements Store_commentDAO_interface {
 			
 			
 		}catch(SQLException se){
-			se.printStackTrace();
+			throw new RuntimeException("A database error occur. " + se.getMessage());
 		}finally{
 			if(pstmt != null){
 				try{

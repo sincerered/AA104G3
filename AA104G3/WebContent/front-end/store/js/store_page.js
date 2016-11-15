@@ -2,6 +2,7 @@ $(function() {
 	navbar = document.getElementById('navbar-example');
 	navbarParent = navbar.parentNode;
 	containerElement = document.getElementsByClassName('container')[0];
+	reversation = document.getElementById('chenken-reversation');
 	window.onscroll = function() {
 		navbarParentRect = navbarParent.getBoundingClientRect();
 
@@ -27,8 +28,8 @@ $(function() {
 	});
 	$('[data-target="#myModal"]').on('click', function(e) {
 		console.log(e.target.dataset.stono);
-		if (stono != e.target.dataset.stono) {
-
+		if (reversation.dataset.stono != e.target.dataset.stono) {
+			
 		}
 	});
 });

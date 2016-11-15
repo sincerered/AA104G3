@@ -11,5 +11,5 @@ public interface StoreDAO_interface {
 	public StoreVO findByPrimaryKey(String stono);
 	public List<StoreVO> getAll();
 	public StoreVO findByStoid(String stoname);
-	public Set<StoreVO> getAll(Map<String, String[]> map);
+	public List<StoreVO> getAll(Map<String, String[]> map);
 }

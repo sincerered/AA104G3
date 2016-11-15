@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.stotable.model.StotableVO" table="stotable">
+
+		<id name="tableno" column="tableno">
+			<generator class="sequence">
+			  <param name="sequence">stotable_seq</param>
+			</generator>
+		</id>
+
+		<property name="stono" column="stono" />
+		<property name="tablemin" column="tablemin" />
+		<property name="tablemax" column="tablemax" />
+		<property name="tablecount" column="tablecount" />
+		<property name="tablestate" column="tablestate" />
+
+
+	</class>
+</hibernate-mapping>

@@ -7,18 +7,22 @@ import java.util.Set;
 
 import javax.servlet.ServletException;
 
+import com.stotable.model.StotableVO;
+
 public class ReservationService {
 	private ReservationDAO_interface dao;
 	
 	public ReservationService() {
-		dao = new ReservationJNDIDAO();
+		dao = new ReservationDAO();
 	}
 	
 	public ReservationVO addReservation(String resvno, String memno, String tableno, Date resvdate, String resvperiod, String teamno, String resvstate) {
 		ReservationVO reservationVO = new ReservationVO();
 		reservationVO.setResvno(resvno);
 		reservationVO.setMemno(memno);
-		reservationVO.setTableno(tableno);
+		StotableVO stotableVO = new StotableVO();
+		stotableVO.setTableno(tableno);
+		reservationVO.setStotableVO(stotableVO);
 		reservationVO.setResvdate(resvdate);
 		reservationVO.setResvperiod(resvperiod);
 		reservationVO.setTeamno(teamno);
@@ -31,7 +35,9 @@ public class ReservationService {
 		ReservationVO reservationVO = new ReservationVO();
 		reservationVO.setResvno(resvno);
 		reservationVO.setMemno(memno);
-		reservationVO.setTableno(tableno);
+		StotableVO stotableVO = new StotableVO();
+		stotableVO.setTableno(tableno);
+		reservationVO.setStotableVO(stotableVO);
 		reservationVO.setResvdate(resvdate);
 		reservationVO.setResvperiod(resvperiod);
 		reservationVO.setTeamno(teamno);
@@ -40,7 +46,7 @@ public class ReservationService {
 		return reservationVO;		
 	}
 
-	public Set<ReservationVO> updateReservations(Set<ReservationVO> set) throws ServletException {
+	public Set<ReservationVO> updateReservations(Set<ReservationVO> set){
 		dao.updates(set);
 		return set;		
 	}

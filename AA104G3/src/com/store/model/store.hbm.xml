@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.store.model.StoreVO" table="store">
+
+		<id name="stono" column="stono">
+			<generator class="sequence">
+			  <param name="sequence">store_seq</param>
+			</generator>
+		</id>
+
+		<property name="stoid" column="stoid" />
+		<property name="stopw" column="stopw" />
+		<property name="stostate" column="stostate" />
+		<property name="stoname" column="stoname" />
+		<property name="stoemail" column="stoemail" />
+		<property name="stoaddr" column="stoaddr" />
+		<property name="stophone" column="stophone" />
+		<property name="stoowner" column="stoowner" />
+		<property name="stolong" column="stolong" />
+		<property name="stolati" column="stolati" />
+		<property name="stopic" column="stopic" />
+		<property name="stoproof" column="stoproof" />
+		<property name="stobh" column="stobh" />
+		<property name="bankno" column="bankno" />
+		<property name="bankname" column="bankname" />
+		<property name="accountname" column="accountname" />
+		<property name="accountno" column="accountno" />
+		
+		<set name="stotables" table="stotable" lazy="true" cascade="none"  inverse="false"  order-by="tableno asc">			
+			<key>
+				<column name="stono" />
+			</key>
+			<one-to-many class="com.stotable.model.StotableVO" />
+		</set>	
+		
+
+
+	</class>
+</hibernate-mapping>

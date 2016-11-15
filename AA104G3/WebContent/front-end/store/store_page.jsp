@@ -1,5 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="BIG5"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:if test="${empty requestScope.storeVO}">
+	<jsp:forward page="/front-end/chenken_index.jsp"></jsp:forward>
+</c:if>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
   <head>
@@ -46,7 +50,7 @@
             
             <div class="col-xs-12 col-sm-8">
               <div class="row">
-                <img class="img-responsive" src="https://api.fnkr.net/testimg/1500x1000/00CED1/FFF/?text=img+placeholder" alt="nothing">
+                <img class="img-responsive" src="<%=request.getContextPath() %>/store/store.do?action=get_stopic&stono=${storeVO.stono}" alt="nothing">
                 
               </div>
               
@@ -90,7 +94,7 @@
             <h4 class="modal-title" id="myModalLabel">Modal title</h4>
           </div>
           <div class="modal-body">
-            <div id="chenken-reservation"></div>
+            <div id="chenken-reservation" data-stono=""></div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
